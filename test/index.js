@@ -3,7 +3,7 @@
 // Load modules
 
 const Code = require('code');
-const Boom = require('../lib');
+const HttpError = require('../lib');
 const Lab = require('lab');
 
 
@@ -18,11 +18,11 @@ const { describe, it } = exports.lab = Lab.script();
 const expect = Code.expect;
 
 
-describe('Boom', () => {
+describe('HttpError', () => {
 
     it('constructs error object (new)', () => {
 
-        const err = new Boom('oops', { statusCode: 400 });
+        const err = new HttpError('oops', { statusCode: 400 });
         expect(err.output.payload.message).to.equal('oops');
         expect(err.output.statusCode).to.equal(400);
     });
@@ -30,7 +30,7 @@ describe('Boom', () => {
     it('clones error object', () => {
 
         const oops = new Error('oops');
-        const err = new Boom(oops, { statusCode: 400 });
+        const err = new HttpError(oops, { statusCode: 400 });
         expect(err).to.not.shallow.equal(oops);
         expect(err.output.payload.message).to.equal('oops');
         expect(err.output.statusCode).to.equal(400);
@@ -38,7 +38,7 @@ describe('Boom', () => {
 
     it('decorates error', () => {
 
-        const err = new Boom('oops', { statusCode: 400, decorate: { x: 1 } });
+        const err = new HttpError('oops', { statusCode: 400, decorate: { x: 1 } });
         expect(err.output.payload.message).to.equal('oops');
         expect(err.output.statusCode).to.equal(400);
         expect(err.x).to.equal(1);
@@ -48,7 +48,7 @@ describe('Boom', () => {
 
         expect(() => {
 
-            new Boom('message', { statusCode: 'x' });
+            new HttpError('message', { statusCode: 'x' });
         }).to.throw('First argument must be a number (400+): x');
     });
 
@@ -63,7 +63,7 @@ describe('Boom', () => {
 
         for (let i = 0; i < codes.length; ++i) {
             const code = codes[i];
-            const err = new Boom('', { statusCode: code.input });
+            const err = new HttpError('', { statusCode: code.input });
             expect(err.output.statusCode).to.equal(code.result);
         }
     });
@@ -72,13 +72,13 @@ describe('Boom', () => {
 
         expect(() => {
 
-            new Boom('', { statusCode: 1 / 0 });
+            new HttpError('', { statusCode: 1 / 0 });
         }).to.throw('First argument must be a number (400+): null');
     });
 
     it('sets error code to unknown', () => {
 
-        const err = new Boom('', { statusCode: 999 });
+        const err = new HttpError('', { statusCode: 999 });
         expect(err.output.payload.error).to.equal('Unknown');
     });
 
@@ -86,23 +86,23 @@ describe('Boom', () => {
 
         it('identifies a boom object', () => {
 
-            expect(new Boom('oops') instanceof Boom).to.be.true();
-            expect(Boom.badRequest('oops') instanceof Boom).to.be.true();
-            expect(new Error('oops') instanceof Boom).to.be.false();
-            expect(Boom.boomify(new Error('oops')) instanceof Boom).to.be.true();
-            expect({ isBoom: true } instanceof Boom).to.be.false();
-            expect(null instanceof Boom).to.be.false();
+            expect(new HttpError('oops') instanceof HttpError).to.be.true();
+            expect(HttpError.badRequest('oops') instanceof HttpError).to.be.true();
+            expect(new Error('oops') instanceof HttpError).to.be.false();
+            expect(HttpError.boomify(new Error('oops')) instanceof HttpError).to.be.true();
+            expect({ isHttpError: true } instanceof HttpError).to.be.false();
+            expect(null instanceof HttpError).to.be.false();
         });
     });
 
-    describe('isBoom()', () => {
+    describe('isHttpError()', () => {
 
         it('identifies a boom object', () => {
 
-            expect(Boom.isBoom(new Boom('oops'))).to.be.true();
-            expect(Boom.isBoom(new Error('oops'))).to.be.false();
-            expect(Boom.isBoom({ isBoom: true })).to.be.false();
-            expect(Boom.isBoom(null)).to.be.false();
+            expect(HttpError.isHttpError(new HttpError('oops'))).to.be.true();
+            expect(HttpError.isHttpError(new Error('oops'))).to.be.false();
+            expect(HttpError.isHttpError({ isHttpError: true })).to.be.false();
+            expect(HttpError.isHttpError(null)).to.be.false();
         });
     });
 
@@ -110,15 +110,15 @@ describe('Boom', () => {
 
         it('returns the same object when already boom', () => {
 
-            const error = Boom.badRequest();
-            expect(error).to.equal(Boom.boomify(error));
-            expect(error).to.equal(Boom.boomify(error, { statusCode: 444 }));
+            const error = HttpError.badRequest();
+            expect(error).to.equal(HttpError.boomify(error));
+            expect(error).to.equal(HttpError.boomify(error, { statusCode: 444 }));
         });
 
         it('decorates error', () => {
 
             const err = new Error('oops');
-            Boom.boomify(err, { statusCode: 400, decorate: { x: 1 } });
+            HttpError.boomify(err, { statusCode: 400, decorate: { x: 1 } });
             expect(err.x).to.equal(1);
         });
 
@@ -126,7 +126,7 @@ describe('Boom', () => {
 
             const error = new Error('ka-boom');
             error.xyz = 123;
-            const err = Boom.boomify(error);
+            const err = HttpError.boomify(error);
             expect(err.xyz).to.equal(123);
             expect(err.message).to.equal('ka-boom');
             expect(err.output).to.equal({
@@ -145,21 +145,21 @@ describe('Boom', () => {
 
             const error = new Error('ka-boom');
             error.data = { useful: 'data' };
-            const err = Boom.boomify(error);
+            const err = HttpError.boomify(error);
             expect(err.data).to.equal(error.data);
         });
 
         it('sets new message when none exists', () => {
 
             const error = new Error();
-            const wrapped = Boom.boomify(error, { statusCode: 400, message: 'something bad' });
+            const wrapped = HttpError.boomify(error, { statusCode: 400, message: 'something bad' });
             expect(wrapped.message).to.equal('something bad');
         });
 
         it('returns boom error unchanged', () => {
 
-            const error = Boom.badRequest('Missing data', { type: 'user' });
-            const boom = Boom.boomify(error);
+            const error = HttpError.badRequest('Missing data', { type: 'user' });
+            const boom = HttpError.boomify(error);
 
             expect(boom).to.shallow.equal(error);
             expect(error.data.type).to.equal('user');
@@ -170,7 +170,7 @@ describe('Boom', () => {
         it('defaults to 500', () => {
 
             const error = new Error('Missing data');
-            const boom = Boom.boomify(error);
+            const boom = HttpError.boomify(error);
 
             expect(boom).to.shallow.equal(error);
             expect(error.output.payload.message).to.equal('An internal server error occurred');
@@ -179,8 +179,8 @@ describe('Boom', () => {
 
         it('overrides message and statusCode', () => {
 
-            const error = Boom.badRequest('Missing data', { type: 'user' });
-            const boom = Boom.boomify(error, { message: 'Override message', statusCode: 599 });
+            const error = HttpError.badRequest('Missing data', { type: 'user' });
+            const boom = HttpError.boomify(error, { message: 'Override message', statusCode: 599 });
 
             expect(boom).to.shallow.equal(error);
             expect(error.data.type).to.equal('user');
@@ -190,8 +190,8 @@ describe('Boom', () => {
 
         it('overrides message', () => {
 
-            const error = Boom.badRequest('Missing data', { type: 'user' });
-            const boom = Boom.boomify(error, { message: 'Override message' });
+            const error = HttpError.badRequest('Missing data', { type: 'user' });
+            const boom = HttpError.boomify(error, { message: 'Override message' });
 
             expect(boom).to.shallow.equal(error);
             expect(error.data.type).to.equal('user');
@@ -201,8 +201,8 @@ describe('Boom', () => {
 
         it('overrides statusCode', () => {
 
-            const error = Boom.badRequest('Missing data', { type: 'user' });
-            const boom = Boom.boomify(error, { statusCode: 599 });
+            const error = HttpError.badRequest('Missing data', { type: 'user' });
+            const boom = HttpError.boomify(error, { statusCode: 599 });
 
             expect(boom).to.shallow.equal(error);
             expect(error.data.type).to.equal('user');
@@ -212,8 +212,8 @@ describe('Boom', () => {
 
         it('skips override', () => {
 
-            const error = Boom.badRequest('Missing data', { type: 'user' });
-            const boom = Boom.boomify(error, { message: 'Override message', statusCode: 599, override: false });
+            const error = HttpError.badRequest('Missing data', { type: 'user' });
+            const boom = HttpError.boomify(error, { message: 'Override message', statusCode: 599, override: false });
 
             expect(boom).to.shallow.equal(error);
             expect(error.data.type).to.equal('user');
@@ -224,7 +224,7 @@ describe('Boom', () => {
         it('initializes plain error', () => {
 
             const error = new Error('Missing data');
-            const boom = Boom.boomify(error, { message: 'Override message', statusCode: 599, override: false });
+            const boom = HttpError.boomify(error, { message: 'Override message', statusCode: 599, override: false });
 
             expect(boom).to.shallow.equal(error);
             expect(error.output.payload.message).to.equal('Override message: Missing data');
@@ -236,14 +236,14 @@ describe('Boom', () => {
 
         it('does not sets null message', () => {
 
-            const error = Boom.unauthorized(null);
+            const error = HttpError.unauthorized(null);
             expect(error.output.payload.message).to.equal('Unauthorized');
             expect(error.isServer).to.be.false();
         });
 
         it('sets message and data', () => {
 
-            const error = Boom.badRequest('Missing data', { type: 'user' });
+            const error = HttpError.badRequest('Missing data', { type: 'user' });
             expect(error.data.type).to.equal('user');
             expect(error.output.payload.message).to.equal('Missing data');
         });
@@ -254,21 +254,21 @@ describe('Boom', () => {
         it('does not sets null message', () => {
 
             const err = new Error('some error message');
-            const boom = Boom.boomify(err, { statusCode: 400, message: 'modified error message' });
+            const boom = HttpError.boomify(err, { statusCode: 400, message: 'modified error message' });
             expect(boom.output.payload.message).to.equal('modified error message: some error message');
         });
     });
 
-    describe('isBoom()', () => {
+    describe('isHttpError()', () => {
 
-        it('returns true for Boom object', () => {
+        it('returns true for HttpError object', () => {
 
-            expect(Boom.badRequest().isBoom).to.equal(true);
+            expect(HttpError.badRequest().isHttpError).to.equal(true);
         });
 
         it('returns false for Error object', () => {
 
-            expect((new Error()).isBoom).to.not.exist();
+            expect((new Error()).isHttpError).to.not.exist();
         });
     });
 
@@ -276,7 +276,7 @@ describe('Boom', () => {
 
         it('returns a 400 error statusCode', () => {
 
-            const error = Boom.badRequest();
+            const error = HttpError.badRequest();
 
             expect(error.output.statusCode).to.equal(400);
             expect(error.isServer).to.be.false();
@@ -284,12 +284,12 @@ describe('Boom', () => {
 
         it('sets the message with the passed in message', () => {
 
-            expect(Boom.badRequest('my message').message).to.equal('my message');
+            expect(HttpError.badRequest('my message').message).to.equal('my message');
         });
 
         it('sets the message to HTTP status if none provided', () => {
 
-            expect(Boom.badRequest().message).to.equal('Bad Request');
+            expect(HttpError.badRequest().message).to.equal('Bad Request');
         });
     });
 
@@ -297,33 +297,33 @@ describe('Boom', () => {
 
         it('returns a 401 error statusCode', () => {
 
-            const err = Boom.unauthorized();
+            const err = HttpError.unauthorized();
             expect(err.output.statusCode).to.equal(401);
             expect(err.output.headers).to.equal({});
         });
 
         it('sets the message with the passed in message', () => {
 
-            expect(Boom.unauthorized('my message').message).to.equal('my message');
+            expect(HttpError.unauthorized('my message').message).to.equal('my message');
         });
 
         it('returns a WWW-Authenticate header when passed a scheme', () => {
 
-            const err = Boom.unauthorized('boom', 'Test');
+            const err = HttpError.unauthorized('boom', 'Test');
             expect(err.output.statusCode).to.equal(401);
             expect(err.output.headers['WWW-Authenticate']).to.equal('Test error="boom"');
         });
 
         it('returns a WWW-Authenticate header set to the schema array value', () => {
 
-            const err = Boom.unauthorized(null, ['Test', 'one', 'two']);
+            const err = HttpError.unauthorized(null, ['Test', 'one', 'two']);
             expect(err.output.statusCode).to.equal(401);
             expect(err.output.headers['WWW-Authenticate']).to.equal('Test, one, two');
         });
 
         it('returns a WWW-Authenticate header when passed a scheme and attributes', () => {
 
-            const err = Boom.unauthorized('boom', 'Test', { a: 1, b: 'something', c: null, d: 0 });
+            const err = HttpError.unauthorized('boom', 'Test', { a: 1, b: 'something', c: null, d: 0 });
             expect(err.output.statusCode).to.equal(401);
             expect(err.output.headers['WWW-Authenticate']).to.equal('Test a="1", b="something", c="", d="0", error="boom"');
             expect(err.output.payload.attributes).to.equal({ a: 1, b: 'something', c: '', d: 0, error: 'boom' });
@@ -331,7 +331,7 @@ describe('Boom', () => {
 
         it('returns a WWW-Authenticate header from string input instead of object', () => {
 
-            const err = Boom.unauthorized(null, 'Negotiate', 'VGhpcyBpcyBhIHRlc3QgdG9rZW4=');
+            const err = HttpError.unauthorized(null, 'Negotiate', 'VGhpcyBpcyBhIHRlc3QgdG9rZW4=');
             expect(err.output.statusCode).to.equal(401);
             expect(err.output.headers['WWW-Authenticate']).to.equal('Negotiate VGhpcyBpcyBhIHRlc3QgdG9rZW4=');
             expect(err.output.payload.attributes).to.equal('VGhpcyBpcyBhIHRlc3QgdG9rZW4=');
@@ -339,7 +339,7 @@ describe('Boom', () => {
 
         it('returns a WWW-Authenticate header when passed attributes, missing error', () => {
 
-            const err = Boom.unauthorized(null, 'Test', { a: 1, b: 'something', c: null, d: 0 });
+            const err = HttpError.unauthorized(null, 'Test', { a: 1, b: 'something', c: null, d: 0 });
             expect(err.output.statusCode).to.equal(401);
             expect(err.output.headers['WWW-Authenticate']).to.equal('Test a="1", b="something", c="", d="0"');
             expect(err.isMissing).to.equal(true);
@@ -347,19 +347,19 @@ describe('Boom', () => {
 
         it('sets the isMissing flag when error message is empty', () => {
 
-            const err = Boom.unauthorized('', 'Basic');
+            const err = HttpError.unauthorized('', 'Basic');
             expect(err.isMissing).to.equal(true);
         });
 
         it('does not set the isMissing flag when error message is not empty', () => {
 
-            const err = Boom.unauthorized('message', 'Basic');
+            const err = HttpError.unauthorized('message', 'Basic');
             expect(err.isMissing).to.equal(undefined);
         });
 
         it('sets a WWW-Authenticate when passed as an array', () => {
 
-            const err = Boom.unauthorized('message', ['Basic', 'Example e="1"', 'Another x="3", y="4"']);
+            const err = HttpError.unauthorized('message', ['Basic', 'Example e="1"', 'Another x="3", y="4"']);
             expect(err.output.headers['WWW-Authenticate']).to.equal('Basic, Example e="1", Another x="3", y="4"');
         });
     });
@@ -369,17 +369,17 @@ describe('Boom', () => {
 
         it('returns a 402 error statusCode', () => {
 
-            expect(Boom.paymentRequired().output.statusCode).to.equal(402);
+            expect(HttpError.paymentRequired().output.statusCode).to.equal(402);
         });
 
         it('sets the message with the passed in message', () => {
 
-            expect(Boom.paymentRequired('my message').message).to.equal('my message');
+            expect(HttpError.paymentRequired('my message').message).to.equal('my message');
         });
 
         it('sets the message to HTTP status if none provided', () => {
 
-            expect(Boom.paymentRequired().message).to.equal('Payment Required');
+            expect(HttpError.paymentRequired().message).to.equal('Payment Required');
         });
     });
 
@@ -388,24 +388,24 @@ describe('Boom', () => {
 
         it('returns a 405 error statusCode', () => {
 
-            expect(Boom.methodNotAllowed().output.statusCode).to.equal(405);
+            expect(HttpError.methodNotAllowed().output.statusCode).to.equal(405);
         });
 
         it('sets the message with the passed in message', () => {
 
-            expect(Boom.methodNotAllowed('my message').message).to.equal('my message');
+            expect(HttpError.methodNotAllowed('my message').message).to.equal('my message');
         });
 
         it('returns an Allow header when passed a string', () => {
 
-            const err = Boom.methodNotAllowed('my message', null, 'GET');
+            const err = HttpError.methodNotAllowed('my message', null, 'GET');
             expect(err.output.statusCode).to.equal(405);
             expect(err.output.headers.Allow).to.equal('GET');
         });
 
         it('returns an Allow header when passed an array', () => {
 
-            const err = Boom.methodNotAllowed('my message', null, ['GET', 'POST']);
+            const err = HttpError.methodNotAllowed('my message', null, ['GET', 'POST']);
             expect(err.output.statusCode).to.equal(405);
             expect(err.output.headers.Allow).to.equal('GET, POST');
         });
@@ -416,12 +416,12 @@ describe('Boom', () => {
 
         it('returns a 406 error statusCode', () => {
 
-            expect(Boom.notAcceptable().output.statusCode).to.equal(406);
+            expect(HttpError.notAcceptable().output.statusCode).to.equal(406);
         });
 
         it('sets the message with the passed in message', () => {
 
-            expect(Boom.notAcceptable('my message').message).to.equal('my message');
+            expect(HttpError.notAcceptable('my message').message).to.equal('my message');
         });
     });
 
@@ -430,12 +430,12 @@ describe('Boom', () => {
 
         it('returns a 407 error statusCode', () => {
 
-            expect(Boom.proxyAuthRequired().output.statusCode).to.equal(407);
+            expect(HttpError.proxyAuthRequired().output.statusCode).to.equal(407);
         });
 
         it('sets the message with the passed in message', () => {
 
-            expect(Boom.proxyAuthRequired('my message').message).to.equal('my message');
+            expect(HttpError.proxyAuthRequired('my message').message).to.equal('my message');
         });
     });
 
@@ -444,12 +444,12 @@ describe('Boom', () => {
 
         it('returns a 408 error statusCode', () => {
 
-            expect(Boom.clientTimeout().output.statusCode).to.equal(408);
+            expect(HttpError.clientTimeout().output.statusCode).to.equal(408);
         });
 
         it('sets the message with the passed in message', () => {
 
-            expect(Boom.clientTimeout('my message').message).to.equal('my message');
+            expect(HttpError.clientTimeout('my message').message).to.equal('my message');
         });
     });
 
@@ -458,12 +458,12 @@ describe('Boom', () => {
 
         it('returns a 409 error statusCode', () => {
 
-            expect(Boom.conflict().output.statusCode).to.equal(409);
+            expect(HttpError.conflict().output.statusCode).to.equal(409);
         });
 
         it('sets the message with the passed in message', () => {
 
-            expect(Boom.conflict('my message').message).to.equal('my message');
+            expect(HttpError.conflict('my message').message).to.equal('my message');
         });
     });
 
@@ -472,12 +472,12 @@ describe('Boom', () => {
 
         it('returns a 410 error statusCode', () => {
 
-            expect(Boom.resourceGone().output.statusCode).to.equal(410);
+            expect(HttpError.resourceGone().output.statusCode).to.equal(410);
         });
 
         it('sets the message with the passed in message', () => {
 
-            expect(Boom.resourceGone('my message').message).to.equal('my message');
+            expect(HttpError.resourceGone('my message').message).to.equal('my message');
         });
     });
 
@@ -486,12 +486,12 @@ describe('Boom', () => {
 
         it('returns a 411 error statusCode', () => {
 
-            expect(Boom.lengthRequired().output.statusCode).to.equal(411);
+            expect(HttpError.lengthRequired().output.statusCode).to.equal(411);
         });
 
         it('sets the message with the passed in message', () => {
 
-            expect(Boom.lengthRequired('my message').message).to.equal('my message');
+            expect(HttpError.lengthRequired('my message').message).to.equal('my message');
         });
     });
 
@@ -500,12 +500,12 @@ describe('Boom', () => {
 
         it('returns a 412 error statusCode', () => {
 
-            expect(Boom.preconditionFailed().output.statusCode).to.equal(412);
+            expect(HttpError.preconditionFailed().output.statusCode).to.equal(412);
         });
 
         it('sets the message with the passed in message', () => {
 
-            expect(Boom.preconditionFailed('my message').message).to.equal('my message');
+            expect(HttpError.preconditionFailed('my message').message).to.equal('my message');
         });
     });
 
@@ -514,12 +514,12 @@ describe('Boom', () => {
 
         it('returns a 413 error statusCode', () => {
 
-            expect(Boom.entityTooLarge().output.statusCode).to.equal(413);
+            expect(HttpError.entityTooLarge().output.statusCode).to.equal(413);
         });
 
         it('sets the message with the passed in message', () => {
 
-            expect(Boom.entityTooLarge('my message').message).to.equal('my message');
+            expect(HttpError.entityTooLarge('my message').message).to.equal('my message');
         });
     });
 
@@ -528,12 +528,12 @@ describe('Boom', () => {
 
         it('returns a 414 error statusCode', () => {
 
-            expect(Boom.uriTooLong().output.statusCode).to.equal(414);
+            expect(HttpError.uriTooLong().output.statusCode).to.equal(414);
         });
 
         it('sets the message with the passed in message', () => {
 
-            expect(Boom.uriTooLong('my message').message).to.equal('my message');
+            expect(HttpError.uriTooLong('my message').message).to.equal('my message');
         });
     });
 
@@ -542,12 +542,12 @@ describe('Boom', () => {
 
         it('returns a 415 error statusCode', () => {
 
-            expect(Boom.unsupportedMediaType().output.statusCode).to.equal(415);
+            expect(HttpError.unsupportedMediaType().output.statusCode).to.equal(415);
         });
 
         it('sets the message with the passed in message', () => {
 
-            expect(Boom.unsupportedMediaType('my message').message).to.equal('my message');
+            expect(HttpError.unsupportedMediaType('my message').message).to.equal('my message');
         });
     });
 
@@ -556,12 +556,12 @@ describe('Boom', () => {
 
         it('returns a 416 error statusCode', () => {
 
-            expect(Boom.rangeNotSatisfiable().output.statusCode).to.equal(416);
+            expect(HttpError.rangeNotSatisfiable().output.statusCode).to.equal(416);
         });
 
         it('sets the message with the passed in message', () => {
 
-            expect(Boom.rangeNotSatisfiable('my message').message).to.equal('my message');
+            expect(HttpError.rangeNotSatisfiable('my message').message).to.equal('my message');
         });
     });
 
@@ -570,12 +570,12 @@ describe('Boom', () => {
 
         it('returns a 417 error statusCode', () => {
 
-            expect(Boom.expectationFailed().output.statusCode).to.equal(417);
+            expect(HttpError.expectationFailed().output.statusCode).to.equal(417);
         });
 
         it('sets the message with the passed in message', () => {
 
-            expect(Boom.expectationFailed('my message').message).to.equal('my message');
+            expect(HttpError.expectationFailed('my message').message).to.equal('my message');
         });
     });
 
@@ -584,12 +584,12 @@ describe('Boom', () => {
 
         it('returns a 418 error statusCode', () => {
 
-            expect(Boom.teapot().output.statusCode).to.equal(418);
+            expect(HttpError.teapot().output.statusCode).to.equal(418);
         });
 
         it('sets the message with the passed in message', () => {
 
-            expect(Boom.teapot('Sorry, no coffee...').message).to.equal('Sorry, no coffee...');
+            expect(HttpError.teapot('Sorry, no coffee...').message).to.equal('Sorry, no coffee...');
         });
     });
 
@@ -598,12 +598,12 @@ describe('Boom', () => {
 
         it('returns a 422 error statusCode', () => {
 
-            expect(Boom.badData().output.statusCode).to.equal(422);
+            expect(HttpError.badData().output.statusCode).to.equal(422);
         });
 
         it('sets the message with the passed in message', () => {
 
-            expect(Boom.badData('my message').message).to.equal('my message');
+            expect(HttpError.badData('my message').message).to.equal('my message');
         });
     });
 
@@ -612,12 +612,12 @@ describe('Boom', () => {
 
         it('returns a 423 error statusCode', () => {
 
-            expect(Boom.locked().output.statusCode).to.equal(423);
+            expect(HttpError.locked().output.statusCode).to.equal(423);
         });
 
         it('sets the message with the passed in message', () => {
 
-            expect(Boom.locked('my message').message).to.equal('my message');
+            expect(HttpError.locked('my message').message).to.equal('my message');
         });
     });
 
@@ -625,12 +625,12 @@ describe('Boom', () => {
 
         it('returns a 424 error statusCode', () => {
 
-            expect(Boom.failedDependency().output.statusCode).to.equal(424);
+            expect(HttpError.failedDependency().output.statusCode).to.equal(424);
         });
 
         it('sets the message with the passed in message', () => {
 
-            expect(Boom.failedDependency('my message').message).to.equal('my message');
+            expect(HttpError.failedDependency('my message').message).to.equal('my message');
         });
     });
 
@@ -639,12 +639,12 @@ describe('Boom', () => {
 
         it('returns a 428 error statusCode', () => {
 
-            expect(Boom.preconditionRequired().output.statusCode).to.equal(428);
+            expect(HttpError.preconditionRequired().output.statusCode).to.equal(428);
         });
 
         it('sets the message with the passed in message', () => {
 
-            expect(Boom.preconditionRequired('my message').message).to.equal('my message');
+            expect(HttpError.preconditionRequired('my message').message).to.equal('my message');
         });
     });
 
@@ -653,12 +653,12 @@ describe('Boom', () => {
 
         it('returns a 429 error statusCode', () => {
 
-            expect(Boom.tooManyRequests().output.statusCode).to.equal(429);
+            expect(HttpError.tooManyRequests().output.statusCode).to.equal(429);
         });
 
         it('sets the message with the passed-in message', () => {
 
-            expect(Boom.tooManyRequests('my message').message).to.equal('my message');
+            expect(HttpError.tooManyRequests('my message').message).to.equal('my message');
         });
     });
 
@@ -667,12 +667,12 @@ describe('Boom', () => {
 
         it('returns a 451 error statusCode', () => {
 
-            expect(Boom.illegal().output.statusCode).to.equal(451);
+            expect(HttpError.illegal().output.statusCode).to.equal(451);
         });
 
         it('sets the message with the passed-in message', () => {
 
-            expect(Boom.illegal('my message').message).to.equal('my message');
+            expect(HttpError.illegal('my message').message).to.equal('my message');
         });
     });
 
@@ -680,12 +680,12 @@ describe('Boom', () => {
 
         it('returns a 503 error statusCode', () => {
 
-            expect(Boom.serverUnavailable().output.statusCode).to.equal(503);
+            expect(HttpError.serverUnavailable().output.statusCode).to.equal(503);
         });
 
         it('sets the message with the passed in message', () => {
 
-            expect(Boom.serverUnavailable('my message').message).to.equal('my message');
+            expect(HttpError.serverUnavailable('my message').message).to.equal('my message');
         });
     });
 
@@ -693,12 +693,12 @@ describe('Boom', () => {
 
         it('returns a 403 error statusCode', () => {
 
-            expect(Boom.forbidden().output.statusCode).to.equal(403);
+            expect(HttpError.forbidden().output.statusCode).to.equal(403);
         });
 
         it('sets the message with the passed in message', () => {
 
-            expect(Boom.forbidden('my message').message).to.equal('my message');
+            expect(HttpError.forbidden('my message').message).to.equal('my message');
         });
     });
 
@@ -706,12 +706,12 @@ describe('Boom', () => {
 
         it('returns a 404 error statusCode', () => {
 
-            expect(Boom.notFound().output.statusCode).to.equal(404);
+            expect(HttpError.notFound().output.statusCode).to.equal(404);
         });
 
         it('sets the message with the passed in message', () => {
 
-            expect(Boom.notFound('my message').message).to.equal('my message');
+            expect(HttpError.notFound('my message').message).to.equal('my message');
         });
     });
 
@@ -719,12 +719,12 @@ describe('Boom', () => {
 
         it('returns a 500 error statusCode', () => {
 
-            expect(Boom.internal().output.statusCode).to.equal(500);
+            expect(HttpError.internal().output.statusCode).to.equal(500);
         });
 
         it('sets the message with the passed in message', () => {
 
-            const err = Boom.internal('my message');
+            const err = HttpError.internal('my message');
             expect(err.message).to.equal('my message');
             expect(err.isServer).to.true();
             expect(err.output.payload.message).to.equal('An internal server error occurred');
@@ -732,7 +732,7 @@ describe('Boom', () => {
 
         it('passes data on the callback if its passed in', () => {
 
-            expect(Boom.internal('my message', { my: 'data' }).data.my).to.equal('data');
+            expect(HttpError.internal('my message', { my: 'data' }).data.my).to.equal('data');
         });
 
         it('returns an error with composite message', () => {
@@ -743,7 +743,7 @@ describe('Boom', () => {
                 x.foo();
             }
             catch (err) {
-                const boom = Boom.internal('Someting bad', err);
+                const boom = HttpError.internal('Someting bad', err);
                 expect(boom.message).to.equal('Someting bad: x.foo is not a function');
                 expect(boom.isServer).to.be.true();
             }
@@ -754,12 +754,12 @@ describe('Boom', () => {
 
         it('returns a 501 error statusCode', () => {
 
-            expect(Boom.notImplemented().output.statusCode).to.equal(501);
+            expect(HttpError.notImplemented().output.statusCode).to.equal(501);
         });
 
         it('sets the message with the passed in message', () => {
 
-            expect(Boom.notImplemented('my message').message).to.equal('my message');
+            expect(HttpError.notImplemented('my message').message).to.equal('my message');
         });
     });
 
@@ -767,18 +767,18 @@ describe('Boom', () => {
 
         it('returns a 502 error statusCode', () => {
 
-            expect(Boom.badGateway().output.statusCode).to.equal(502);
+            expect(HttpError.badGateway().output.statusCode).to.equal(502);
         });
 
         it('sets the message with the passed in message', () => {
 
-            expect(Boom.badGateway('my message').message).to.equal('my message');
+            expect(HttpError.badGateway('my message').message).to.equal('my message');
         });
 
         it('retains source boom error as data when wrapped', () => {
 
-            const upstream = Boom.serverUnavailable();
-            const boom = Boom.badGateway('Upstream error', upstream);
+            const upstream = HttpError.serverUnavailable();
+            const boom = HttpError.badGateway('Upstream error', upstream);
             expect(boom.output.statusCode).to.equal(502);
             expect(boom.data).to.equal(upstream);
         });
@@ -788,12 +788,12 @@ describe('Boom', () => {
 
         it('returns a 504 error statusCode', () => {
 
-            expect(Boom.gatewayTimeout().output.statusCode).to.equal(504);
+            expect(HttpError.gatewayTimeout().output.statusCode).to.equal(504);
         });
 
         it('sets the message with the passed in message', () => {
 
-            expect(Boom.gatewayTimeout('my message').message).to.equal('my message');
+            expect(HttpError.gatewayTimeout('my message').message).to.equal('my message');
         });
     });
 
@@ -801,7 +801,7 @@ describe('Boom', () => {
 
         it('returns a 500 error statusCode', () => {
 
-            const err = Boom.badImplementation();
+            const err = HttpError.badImplementation();
             expect(err.output.statusCode).to.equal(500);
             expect(err.isDeveloperError).to.equal(true);
             expect(err.isServer).to.be.true();
@@ -809,7 +809,7 @@ describe('Boom', () => {
 
         it('hides error from user when error data is included', () => {
 
-            const err = Boom.badImplementation('Invalid', new Error('kaboom'));
+            const err = HttpError.badImplementation('Invalid', new Error('kaboom'));
             expect(err.output).to.equal({
                 headers: {},
                 statusCode: 500,
@@ -823,7 +823,7 @@ describe('Boom', () => {
 
         it('hides error from user when error data is included (boom)', () => {
 
-            const err = Boom.badImplementation('Invalid', Boom.badRequest('kaboom'));
+            const err = HttpError.badImplementation('Invalid', HttpError.badRequest('kaboom'));
             expect(err.isDeveloperError).to.equal(true);
             expect(err.output).to.equal({
                 headers: {},
@@ -852,7 +852,7 @@ describe('Boom', () => {
                 'gatewayTimeout', 'badImplementation'
             ].forEach((name) => {
 
-                const err = Boom[name]();
+                const err = HttpError[name]();
                 expect(err.stack).to.not.match(/\/lib\/index\.js/);
             });
         });
@@ -889,11 +889,11 @@ describe('Boom', () => {
             'badImplementation'
         ].forEach((name) => {
 
-            it(`should allow \`Boom${name}(err)\` and preserve the error`, () => {
+            it(`should allow \`HttpError${name}(err)\` and preserve the error`, () => {
 
                 const error = new Error('An example mongoose validation error');
                 error.name = 'ValidationError';
-                const err = Boom[name](error);
+                const err = HttpError[name](error);
                 expect(err.name).to.equal('ValidationError');
                 expect(err.message).to.equal('An example mongoose validation error');
             });
@@ -902,10 +902,10 @@ describe('Boom', () => {
 
             if (name !== 'unauthorized') {
 
-                it(`should allow \`Boom.${name}(err, data)\` and preserve the data`, () => {
+                it(`should allow \`HttpError.${name}(err, data)\` and preserve the data`, () => {
 
                     const error = new Error();
-                    const err = Boom[name](error, { foo: 'bar' });
+                    const err = HttpError[name](error, { foo: 'bar' });
                     expect(err.data).to.equal({ foo: 'bar' });
                 });
             }
@@ -945,16 +945,16 @@ describe('Boom', () => {
 
         types.forEach((name) => {
 
-            it(`matches typeof Boom.${name}`, () => {
+            it(`matches typeof HttpError.${name}`, () => {
 
-                const error = Boom[name]();
+                const error = HttpError[name]();
                 types.forEach((type) => {
 
                     if (type === name) {
-                        expect(error.typeof).to.equal(Boom[name]);
+                        expect(error.typeof).to.equal(HttpError[name]);
                     }
                     else {
-                        expect(error.typeof).to.not.equal(Boom[type]);
+                        expect(error.typeof).to.not.equal(HttpError[type]);
                     }
                 });
             });

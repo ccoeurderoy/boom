@@ -1,65 +1,62 @@
 ![boom Logo](https://raw.github.com/hapijs/boom/master/images/boom.png)
 
-HTTP-friendly error objects
-
-[![Build Status](https://secure.travis-ci.org/hapijs/boom.svg)](http://travis-ci.org/hapijs/boom)
-[![Current Version](https://img.shields.io/npm/v/boom.svg)](https://www.npmjs.com/package/boom)
+HTTP-friendly error objects based on [boomjs](https://github.com/ccoeurderoy/boom.git).
 
 Lead Maintainer: [Adam Bretz](https://github.com/arb)
 
 <!-- toc -->
 
-- [Boom](#boom)
-  - [Helper Methods](#helper-methods)
-    - [`new Boom(message, [options])`](#new-boommessage-options)
-    - [`boomify(err, [options])`](#boomifyerr-options)
-    - [`isBoom(err)`](#isboomerr)
-  - [HTTP 4xx Errors](#http-4xx-errors)
-    - [`Boom.badRequest([message], [data])`](#boombadrequestmessage-data)
-    - [`Boom.unauthorized([message], [scheme], [attributes])`](#boomunauthorizedmessage-scheme-attributes)
-    - [`Boom.paymentRequired([message], [data])`](#boompaymentrequiredmessage-data)
-    - [`Boom.forbidden([message], [data])`](#boomforbiddenmessage-data)
-    - [`Boom.notFound([message], [data])`](#boomnotfoundmessage-data)
-    - [`Boom.methodNotAllowed([message], [data], [allow])`](#boommethodnotallowedmessage-data-allow)
-    - [`Boom.notAcceptable([message], [data])`](#boomnotacceptablemessage-data)
-    - [`Boom.proxyAuthRequired([message], [data])`](#boomproxyauthrequiredmessage-data)
-    - [`Boom.clientTimeout([message], [data])`](#boomclienttimeoutmessage-data)
-    - [`Boom.conflict([message], [data])`](#boomconflictmessage-data)
-    - [`Boom.resourceGone([message], [data])`](#boomresourcegonemessage-data)
-    - [`Boom.lengthRequired([message], [data])`](#boomlengthrequiredmessage-data)
-    - [`Boom.preconditionFailed([message], [data])`](#boompreconditionfailedmessage-data)
-    - [`Boom.entityTooLarge([message], [data])`](#boomentitytoolargemessage-data)
-    - [`Boom.uriTooLong([message], [data])`](#boomuritoolongmessage-data)
-    - [`Boom.unsupportedMediaType([message], [data])`](#boomunsupportedmediatypemessage-data)
-    - [`Boom.rangeNotSatisfiable([message], [data])`](#boomrangenotsatisfiablemessage-data)
-    - [`Boom.expectationFailed([message], [data])`](#boomexpectationfailedmessage-data)
-    - [`Boom.teapot([message], [data])`](#boomteapotmessage-data)
-    - [`Boom.badData([message], [data])`](#boombaddatamessage-data)
-    - [`Boom.locked([message], [data])`](#boomlockedmessage-data)
-    - [`Boom.failedDependency([message], [data])`](#boomfaileddependencymessage-data)
-    - [`Boom.preconditionRequired([message], [data])`](#boompreconditionrequiredmessage-data)
-    - [`Boom.tooManyRequests([message], [data])`](#boomtoomanyrequestsmessage-data)
-    - [`Boom.illegal([message], [data])`](#boomillegalmessage-data)
-  - [HTTP 5xx Errors](#http-5xx-errors)
-    - [`Boom.badImplementation([message], [data])` - (*alias: `internal`*)](#boombadimplementationmessage-data---alias-internal)
-    - [`Boom.notImplemented([message], [data])`](#boomnotimplementedmessage-data)
-    - [`Boom.badGateway([message], [data])`](#boombadgatewaymessage-data)
-    - [`Boom.serverUnavailable([message], [data])`](#boomserverunavailablemessage-data)
-    - [`Boom.gatewayTimeout([message], [data])`](#boomgatewaytimeoutmessage-data)
-  - [F.A.Q.](#faq)
+- [HttpError](#httperror)
+    - [Helper Methods](#helper-methods)
+        - [`new HttpError(message, [options])`](#new-httperrormessage-options)
+        - [`boomify(err, [options])`](#boomifyerr-options)
+        - [`isHttpError(err)`](#ishttperrorerr)
+    - [HTTP 4xx Errors](#http-4xx-errors)
+        - [`HttpError.badRequest([message], [data])`](#httperrorbadrequestmessage-data)
+        - [`HttpError.unauthorized([message], [scheme], [attributes])`](#httperrorunauthorizedmessage-scheme-attributes)
+        - [`HttpError.paymentRequired([message], [data])`](#httperrorpaymentrequiredmessage-data)
+        - [`HttpError.forbidden([message], [data])`](#httperrorforbiddenmessage-data)
+        - [`HttpError.notFound([message], [data])`](#httperrornotfoundmessage-data)
+        - [`HttpError.methodNotAllowed([message], [data], [allow])`](#httperrormethodnotallowedmessage-data-allow)
+        - [`HttpError.notAcceptable([message], [data])`](#httperrornotacceptablemessage-data)
+        - [`HttpError.proxyAuthRequired([message], [data])`](#httperrorproxyauthrequiredmessage-data)
+        - [`HttpError.clientTimeout([message], [data])`](#httperrorclienttimeoutmessage-data)
+        - [`HttpError.conflict([message], [data])`](#httperrorconflictmessage-data)
+        - [`HttpError.resourceGone([message], [data])`](#httperrorresourcegonemessage-data)
+        - [`HttpError.lengthRequired([message], [data])`](#httperrorlengthrequiredmessage-data)
+        - [`HttpError.preconditionFailed([message], [data])`](#httperrorpreconditionfailedmessage-data)
+        - [`HttpError.entityTooLarge([message], [data])`](#httperrorentitytoolargemessage-data)
+        - [`HttpError.uriTooLong([message], [data])`](#httperroruritoolongmessage-data)
+        - [`HttpError.unsupportedMediaType([message], [data])`](#httperrorunsupportedmediatypemessage-data)
+        - [`HttpError.rangeNotSatisfiable([message], [data])`](#httperrorrangenotsatisfiablemessage-data)
+        - [`HttpError.expectationFailed([message], [data])`](#httperrorexpectationfailedmessage-data)
+        - [`HttpError.teapot([message], [data])`](#httperrorteapotmessage-data)
+        - [`HttpError.badData([message], [data])`](#httperrorbaddatamessage-data)
+        - [`HttpError.locked([message], [data])`](#httperrorlockedmessage-data)
+        - [`HttpError.failedDependency([message], [data])`](#httperrorfaileddependencymessage-data)
+        - [`HttpError.preconditionRequired([message], [data])`](#httperrorpreconditionrequiredmessage-data)
+        - [`HttpError.tooManyRequests([message], [data])`](#httperrortoomanyrequestsmessage-data)
+        - [`HttpError.illegal([message], [data])`](#httperrorillegalmessage-data)
+    - [HTTP 5xx Errors](#http-5xx-errors)
+        - [`HttpError.badImplementation([message], [data])` - (*alias: `internal`*)](#httperrorbadimplementationmessage-data---alias-internal)
+        - [`HttpError.notImplemented([message], [data])`](#httperrornotimplementedmessage-data)
+        - [`HttpError.badGateway([message], [data])`](#httperrorbadgatewaymessage-data)
+        - [`HttpError.serverUnavailable([message], [data])`](#httperrorserverunavailablemessage-data)
+        - [`HttpError.gatewayTimeout([message], [data])`](#httperrorgatewaytimeoutmessage-data)
+    - [F.A.Q.](#faq)
 
 <!-- tocstop -->
 
-# Boom
+# HttpError
 
-**boom** provides a set of utilities for returning HTTP errors. Each utility returns a `Boom`
+**boom** provides a set of utilities for returning HTTP errors. Each utility returns a `HttpError`
 error response object which includes the following properties:
-- `isBoom` - if `true`, indicates this is a `Boom` object instance. Note that this boolean should
-  only be used if the error is an instance of `Error`. If it is not certain, use `Boom.isBoom()`
+- `isHttpError` - if `true`, indicates this is a `HttpError` object instance. Note that this boolean should
+  only be used if the error is an instance of `Error`. If it is not certain, use `HttpError.isHttpError()`
   instead.
 - `isServer` - convenience bool indicating status code >= 500.
 - `message` - the error message.
-- `typeof` - the constructor used to create the error (e.g. `Boom.badRequest`).
+- `typeof` - the constructor used to create the error (e.g. `HttpError.badRequest`).
 - `output` - the formatted response. Can be directly manipulated after object construction to return a custom
   error response. Allowed root keys:
     - `statusCode` - the HTTP status code (typically 4xx or 5xx).
@@ -72,21 +69,21 @@ error response object which includes the following properties:
         - `message` - the error message derived from `error.message`.
 - inherited `Error` properties.
 
-The `Boom` object also supports the following method:
+The `HttpError` object also supports the following method:
 - `reformat()` - rebuilds `error.output` using the other object properties.
 
-Note that `Boom` object will return `true` when used with `instanceof Boom`, but do not use the
-`Boom` prototype (they are either plain `Error` or the error prototype passed in). This means
-`Boom` objects should only be tested using `instanceof Boom` or `Boom.isBoom()` but not by looking
+Note that `HttpError` object will return `true` when used with `instanceof HttpError`, but do not use the
+`HttpError` prototype (they are either plain `Error` or the error prototype passed in). This means
+`HttpError` objects should only be tested using `instanceof HttpError` or `HttpError.isHttpError()` but not by looking
 at the prototype or contructor information. This limitation is to avoid manipulating the prototype
 chain which is very slow.
 
 ## Helper Methods
 
-### `new Boom(message, [options])`
+### `new HttpError(message, [options])`
 
-Creates a new `Boom` object using the provided `message` and then calling
-[`boomify()`](#boomifyerr-options) to decorate the error with the `Boom` properties, where:
+Creates a new `HttpError` object using the provided `message` and then calling
+[`boomify()`](#boomifyerr-options) to decorate the error with the `HttpError` properties, where:
 - `message` - the error message. If `message` is an error, it is the same as calling
   [`boomify()`](#boomifyerr-options) directly.
 - `options` - and optional object where:
@@ -99,36 +96,36 @@ Creates a new `Boom` object using the provided `message` and then calling
 
 ### `boomify(err, [options])`
 
-Decorates an error with the `Boom` properties where:
+Decorates an error with the `HttpError` properties where:
 - `err` - the `Error` object to decorate.
 - `options` - optional object with the following optional settings:
-	- `statusCode` - the HTTP status code. Defaults to `500` if no status code is already set and `err` is not a `Boom` object.
+	- `statusCode` - the HTTP status code. Defaults to `500` if no status code is already set and `err` is not a `HttpError` object.
 	- `message` - error message string. If the error already has a message, the provided `message` is added as a prefix.
 	  Defaults to no message.
     - `decorate` - an option with extra properties to set on the error object.
-	- `override` - if `false`, the `err` provided is a `Boom` object, and a `statusCode` or `message` are provided,
+	- `override` - if `false`, the `err` provided is a `HttpError` object, and a `statusCode` or `message` are provided,
 	  the values are ignored. Defaults to `true` (apply the provided `statusCode` and `message` options to the error
-	  regardless of its type, `Error` or `Boom` object).
+	  regardless of its type, `Error` or `HttpError` object).
 
 ```js
 var error = new Error('Unexpected input');
-Boom.boomify(error, { statusCode: 400 });
+HttpError.boomify(error, { statusCode: 400 });
 ```
 
-### `isBoom(err)`
+### `isHttpError(err)`
 
-Identifies whether an error is a `Boom` object. Same as calling `instanceof Boom`.
+Identifies whether an error is a `HttpError` object. Same as calling `instanceof HttpError`.
 
 ## HTTP 4xx Errors
 
-### `Boom.badRequest([message], [data])`
+### `HttpError.badRequest([message], [data])`
 
 Returns a 400 Bad Request error where:
 - `message` - optional message.
 - `data` - optional additional error data.
 
 ```js
-Boom.badRequest('invalid query');
+HttpError.badRequest('invalid query');
 ```
 
 Generates the following response payload:
@@ -141,7 +138,7 @@ Generates the following response payload:
 }
 ```
 
-### `Boom.unauthorized([message], [scheme], [attributes])`
+### `HttpError.unauthorized([message], [scheme], [attributes])`
 
 Returns a 401 Unauthorized error where:
 - `message` - optional message.
@@ -155,11 +152,11 @@ Returns a 401 Unauthorized error where:
   the 'error' segment of the 'WWW-Authenticate' header. If `message` is unset, the 'error' segment of the header
   will not be present and `isMissing` will be true on the error object.
 
-If either `scheme` or `attributes` are set, the resultant `Boom` object will have the
+If either `scheme` or `attributes` are set, the resultant `HttpError` object will have the
 'WWW-Authenticate' header set for the response.
 
 ```js
-Boom.unauthorized('invalid password');
+HttpError.unauthorized('invalid password');
 ```
 
 Generates the following response:
@@ -174,7 +171,7 @@ Generates the following response:
 ```
 
 ```js
-Boom.unauthorized('invalid password', 'sample');
+HttpError.unauthorized('invalid password', 'sample');
 ```
 
 Generates the following response:
@@ -194,7 +191,7 @@ Generates the following response:
 ```
 
 ```js
-Boom.unauthorized(null, 'Negotiate', 'VGhpcyBpcyBhIHRlc3QgdG9rZW4=');
+HttpError.unauthorized(null, 'Negotiate', 'VGhpcyBpcyBhIHRlc3QgdG9rZW4=');
 ```
 
 Generates the following response:
@@ -211,7 +208,7 @@ Generates the following response:
 ```
 
 ```js
-Boom.unauthorized('invalid password', 'sample', { ttl: 0, cache: null, foo: 'bar' });
+HttpError.unauthorized('invalid password', 'sample', { ttl: 0, cache: null, foo: 'bar' });
 ```
 
 Generates the following response:
@@ -233,14 +230,14 @@ Generates the following response:
 }
 ```
 
-### `Boom.paymentRequired([message], [data])`
+### `HttpError.paymentRequired([message], [data])`
 
 Returns a 402 Payment Required error where:
 - `message` - optional message.
 - `data` - optional additional error data.
 
 ```js
-Boom.paymentRequired('bandwidth used');
+HttpError.paymentRequired('bandwidth used');
 ```
 
 Generates the following response payload:
@@ -253,14 +250,14 @@ Generates the following response payload:
 }
 ```
 
-### `Boom.forbidden([message], [data])`
+### `HttpError.forbidden([message], [data])`
 
 Returns a 403 Forbidden error where:
 - `message` - optional message.
 - `data` - optional additional error data.
 
 ```js
-Boom.forbidden('try again some time');
+HttpError.forbidden('try again some time');
 ```
 
 Generates the following response payload:
@@ -273,14 +270,14 @@ Generates the following response payload:
 }
 ```
 
-### `Boom.notFound([message], [data])`
+### `HttpError.notFound([message], [data])`
 
 Returns a 404 Not Found error where:
 - `message` - optional message.
 - `data` - optional additional error data.
 
 ```js
-Boom.notFound('missing');
+HttpError.notFound('missing');
 ```
 
 Generates the following response payload:
@@ -293,7 +290,7 @@ Generates the following response payload:
 }
 ```
 
-### `Boom.methodNotAllowed([message], [data], [allow])`
+### `HttpError.methodNotAllowed([message], [data], [allow])`
 
 Returns a 405 Method Not Allowed error where:
 - `message` - optional message.
@@ -301,7 +298,7 @@ Returns a 405 Method Not Allowed error where:
 - `allow` - optional string or array of strings (to be combined and separated by ', ') which is set to the 'Allow' header.
 
 ```js
-Boom.methodNotAllowed('that method is not allowed');
+HttpError.methodNotAllowed('that method is not allowed');
 ```
 
 Generates the following response payload:
@@ -314,14 +311,14 @@ Generates the following response payload:
 }
 ```
 
-### `Boom.notAcceptable([message], [data])`
+### `HttpError.notAcceptable([message], [data])`
 
 Returns a 406 Not Acceptable error where:
 - `message` - optional message.
 - `data` - optional additional error data.
 
 ```js
-Boom.notAcceptable('unacceptable');
+HttpError.notAcceptable('unacceptable');
 ```
 
 Generates the following response payload:
@@ -334,14 +331,14 @@ Generates the following response payload:
 }
 ```
 
-### `Boom.proxyAuthRequired([message], [data])`
+### `HttpError.proxyAuthRequired([message], [data])`
 
 Returns a 407 Proxy Authentication Required error where:
 - `message` - optional message.
 - `data` - optional additional error data.
 
 ```js
-Boom.proxyAuthRequired('auth missing');
+HttpError.proxyAuthRequired('auth missing');
 ```
 
 Generates the following response payload:
@@ -354,14 +351,14 @@ Generates the following response payload:
 }
 ```
 
-### `Boom.clientTimeout([message], [data])`
+### `HttpError.clientTimeout([message], [data])`
 
 Returns a 408 Request Time-out error where:
 - `message` - optional message.
 - `data` - optional additional error data.
 
 ```js
-Boom.clientTimeout('timed out');
+HttpError.clientTimeout('timed out');
 ```
 
 Generates the following response payload:
@@ -374,14 +371,14 @@ Generates the following response payload:
 }
 ```
 
-### `Boom.conflict([message], [data])`
+### `HttpError.conflict([message], [data])`
 
 Returns a 409 Conflict error where:
 - `message` - optional message.
 - `data` - optional additional error data.
 
 ```js
-Boom.conflict('there was a conflict');
+HttpError.conflict('there was a conflict');
 ```
 
 Generates the following response payload:
@@ -394,14 +391,14 @@ Generates the following response payload:
 }
 ```
 
-### `Boom.resourceGone([message], [data])`
+### `HttpError.resourceGone([message], [data])`
 
 Returns a 410 Gone error where:
 - `message` - optional message.
 - `data` - optional additional error data.
 
 ```js
-Boom.resourceGone('it is gone');
+HttpError.resourceGone('it is gone');
 ```
 
 Generates the following response payload:
@@ -414,14 +411,14 @@ Generates the following response payload:
 }
 ```
 
-### `Boom.lengthRequired([message], [data])`
+### `HttpError.lengthRequired([message], [data])`
 
 Returns a 411 Length Required error where:
 - `message` - optional message.
 - `data` - optional additional error data.
 
 ```js
-Boom.lengthRequired('length needed');
+HttpError.lengthRequired('length needed');
 ```
 
 Generates the following response payload:
@@ -434,14 +431,14 @@ Generates the following response payload:
 }
 ```
 
-### `Boom.preconditionFailed([message], [data])`
+### `HttpError.preconditionFailed([message], [data])`
 
 Returns a 412 Precondition Failed error where:
 - `message` - optional message.
 - `data` - optional additional error data.
 
 ```js
-Boom.preconditionFailed();
+HttpError.preconditionFailed();
 ```
 
 Generates the following response payload:
@@ -453,14 +450,14 @@ Generates the following response payload:
 }
 ```
 
-### `Boom.entityTooLarge([message], [data])`
+### `HttpError.entityTooLarge([message], [data])`
 
 Returns a 413 Request Entity Too Large error where:
 - `message` - optional message.
 - `data` - optional additional error data.
 
 ```js
-Boom.entityTooLarge('too big');
+HttpError.entityTooLarge('too big');
 ```
 
 Generates the following response payload:
@@ -473,14 +470,14 @@ Generates the following response payload:
 }
 ```
 
-### `Boom.uriTooLong([message], [data])`
+### `HttpError.uriTooLong([message], [data])`
 
 Returns a 414 Request-URI Too Large error where:
 - `message` - optional message.
 - `data` - optional additional error data.
 
 ```js
-Boom.uriTooLong('uri is too long');
+HttpError.uriTooLong('uri is too long');
 ```
 
 Generates the following response payload:
@@ -493,14 +490,14 @@ Generates the following response payload:
 }
 ```
 
-### `Boom.unsupportedMediaType([message], [data])`
+### `HttpError.unsupportedMediaType([message], [data])`
 
 Returns a 415 Unsupported Media Type error where:
 - `message` - optional message.
 - `data` - optional additional error data.
 
 ```js
-Boom.unsupportedMediaType('that media is not supported');
+HttpError.unsupportedMediaType('that media is not supported');
 ```
 
 Generates the following response payload:
@@ -513,14 +510,14 @@ Generates the following response payload:
 }
 ```
 
-### `Boom.rangeNotSatisfiable([message], [data])`
+### `HttpError.rangeNotSatisfiable([message], [data])`
 
 Returns a 416 Requested Range Not Satisfiable error where:
 - `message` - optional message.
 - `data` - optional additional error data.
 
 ```js
-Boom.rangeNotSatisfiable();
+HttpError.rangeNotSatisfiable();
 ```
 
 Generates the following response payload:
@@ -532,14 +529,14 @@ Generates the following response payload:
 }
 ```
 
-### `Boom.expectationFailed([message], [data])`
+### `HttpError.expectationFailed([message], [data])`
 
 Returns a 417 Expectation Failed error where:
 - `message` - optional message.
 - `data` - optional additional error data.
 
 ```js
-Boom.expectationFailed('expected this to work');
+HttpError.expectationFailed('expected this to work');
 ```
 
 Generates the following response payload:
@@ -552,14 +549,14 @@ Generates the following response payload:
 }
 ```
 
-### `Boom.teapot([message], [data])`
+### `HttpError.teapot([message], [data])`
 
 Returns a 418 I'm a Teapot error where:
 - `message` - optional message.
 - `data` - optional additional error data.
 
 ```js
-Boom.teapot('sorry, no coffee...');
+HttpError.teapot('sorry, no coffee...');
 ```
 
 Generates the following response payload:
@@ -572,14 +569,14 @@ Generates the following response payload:
 }
 ```
 
-### `Boom.badData([message], [data])`
+### `HttpError.badData([message], [data])`
 
 Returns a 422 Unprocessable Entity error where:
 - `message` - optional message.
 - `data` - optional additional error data.
 
 ```js
-Boom.badData('your data is bad and you should feel bad');
+HttpError.badData('your data is bad and you should feel bad');
 ```
 
 Generates the following response payload:
@@ -592,14 +589,14 @@ Generates the following response payload:
 }
 ```
 
-### `Boom.locked([message], [data])`
+### `HttpError.locked([message], [data])`
 
 Returns a 423 Locked error where:
 - `message` - optional message.
 - `data` - optional additional error data.
 
 ```js
-Boom.locked('this resource has been locked');
+HttpError.locked('this resource has been locked');
 ```
 
 Generates the following response payload:
@@ -612,14 +609,14 @@ Generates the following response payload:
 }
 ```
 
-### `Boom.failedDependency([message], [data])`
+### `HttpError.failedDependency([message], [data])`
 
 Returns a 424 Failed Dependency error where:
 - `message` - optional message.
 - `data` - optional additional error data.
 
 ```js
-Boom.failedDependency('an external resource failed');
+HttpError.failedDependency('an external resource failed');
 ```
 
 Generates the following response payload:
@@ -632,14 +629,14 @@ Generates the following response payload:
 }
 ```
 
-### `Boom.preconditionRequired([message], [data])`
+### `HttpError.preconditionRequired([message], [data])`
 
 Returns a 428 Precondition Required error where:
 - `message` - optional message.
 - `data` - optional additional error data.
 
 ```js
-Boom.preconditionRequired('you must supply an If-Match header');
+HttpError.preconditionRequired('you must supply an If-Match header');
 ```
 
 Generates the following response payload:
@@ -652,14 +649,14 @@ Generates the following response payload:
 }
 ```
 
-### `Boom.tooManyRequests([message], [data])`
+### `HttpError.tooManyRequests([message], [data])`
 
 Returns a 429 Too Many Requests error where:
 - `message` - optional message.
 - `data` - optional additional error data.
 
 ```js
-Boom.tooManyRequests('you have exceeded your request limit');
+HttpError.tooManyRequests('you have exceeded your request limit');
 ```
 
 Generates the following response payload:
@@ -672,14 +669,14 @@ Generates the following response payload:
 }
 ```
 
-### `Boom.illegal([message], [data])`
+### `HttpError.illegal([message], [data])`
 
 Returns a 451 Unavailable For Legal Reasons error where:
 - `message` - optional message.
 - `data` - optional additional error data.
 
 ```js
-Boom.illegal('you are not permitted to view this resource for legal reasons');
+HttpError.illegal('you are not permitted to view this resource for legal reasons');
 ```
 
 Generates the following response payload:
@@ -696,14 +693,14 @@ Generates the following response payload:
 
 All 500 errors hide your message from the end user. Your message is recorded in the server log.
 
-### `Boom.badImplementation([message], [data])` - (*alias: `internal`*)
+### `HttpError.badImplementation([message], [data])` - (*alias: `internal`*)
 
 Returns a 500 Internal Server Error error where:
 - `message` - optional message.
 - `data` - optional additional error data.
 
 ```js
-Boom.badImplementation('terrible implementation');
+HttpError.badImplementation('terrible implementation');
 ```
 
 Generates the following response payload:
@@ -716,14 +713,14 @@ Generates the following response payload:
 }
 ```
 
-### `Boom.notImplemented([message], [data])`
+### `HttpError.notImplemented([message], [data])`
 
 Returns a 501 Not Implemented error where:
 - `message` - optional message.
 - `data` - optional additional error data.
 
 ```js
-Boom.notImplemented('method not implemented');
+HttpError.notImplemented('method not implemented');
 ```
 
 Generates the following response payload:
@@ -736,14 +733,14 @@ Generates the following response payload:
 }
 ```
 
-### `Boom.badGateway([message], [data])`
+### `HttpError.badGateway([message], [data])`
 
 Returns a 502 Bad Gateway error where:
 - `message` - optional message.
 - `data` - optional additional error data.
 
 ```js
-Boom.badGateway('that is a bad gateway');
+HttpError.badGateway('that is a bad gateway');
 ```
 
 Generates the following response payload:
@@ -756,14 +753,14 @@ Generates the following response payload:
 }
 ```
 
-### `Boom.serverUnavailable([message], [data])`
+### `HttpError.serverUnavailable([message], [data])`
 
 Returns a 503 Service Unavailable error where:
 - `message` - optional message.
 - `data` - optional additional error data.
 
 ```js
-Boom.serverUnavailable('unavailable');
+HttpError.serverUnavailable('unavailable');
 ```
 
 Generates the following response payload:
@@ -776,14 +773,14 @@ Generates the following response payload:
 }
 ```
 
-### `Boom.gatewayTimeout([message], [data])`
+### `HttpError.gatewayTimeout([message], [data])`
 
 Returns a 504 Gateway Time-out error where:
 - `message` - optional message.
 - `data` - optional additional error data.
 
 ```js
-Boom.gatewayTimeout();
+HttpError.gatewayTimeout();
 ```
 
 Generates the following response payload:
