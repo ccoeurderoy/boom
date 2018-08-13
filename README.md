@@ -12,37 +12,37 @@ Lead Maintainer: [Adam Bretz](https://github.com/arb)
         - [`boomify(err, [options])`](#boomifyerr-options)
         - [`isHttpError(err)`](#ishttperrorerr)
     - [HTTP 4xx Errors](#http-4xx-errors)
-        - [`HttpError.badRequest([message], [data])`](#httperrorbadrequestmessage-data)
-        - [`HttpError.unauthorized([message], [scheme], [attributes])`](#httperrorunauthorizedmessage-scheme-attributes)
-        - [`HttpError.paymentRequired([message], [data])`](#httperrorpaymentrequiredmessage-data)
-        - [`HttpError.forbidden([message], [data])`](#httperrorforbiddenmessage-data)
-        - [`HttpError.notFound([message], [data])`](#httperrornotfoundmessage-data)
-        - [`HttpError.methodNotAllowed([message], [data], [allow])`](#httperrormethodnotallowedmessage-data-allow)
-        - [`HttpError.notAcceptable([message], [data])`](#httperrornotacceptablemessage-data)
-        - [`HttpError.proxyAuthRequired([message], [data])`](#httperrorproxyauthrequiredmessage-data)
-        - [`HttpError.clientTimeout([message], [data])`](#httperrorclienttimeoutmessage-data)
-        - [`HttpError.conflict([message], [data])`](#httperrorconflictmessage-data)
-        - [`HttpError.resourceGone([message], [data])`](#httperrorresourcegonemessage-data)
-        - [`HttpError.lengthRequired([message], [data])`](#httperrorlengthrequiredmessage-data)
-        - [`HttpError.preconditionFailed([message], [data])`](#httperrorpreconditionfailedmessage-data)
-        - [`HttpError.entityTooLarge([message], [data])`](#httperrorentitytoolargemessage-data)
-        - [`HttpError.uriTooLong([message], [data])`](#httperroruritoolongmessage-data)
-        - [`HttpError.unsupportedMediaType([message], [data])`](#httperrorunsupportedmediatypemessage-data)
-        - [`HttpError.rangeNotSatisfiable([message], [data])`](#httperrorrangenotsatisfiablemessage-data)
-        - [`HttpError.expectationFailed([message], [data])`](#httperrorexpectationfailedmessage-data)
-        - [`HttpError.teapot([message], [data])`](#httperrorteapotmessage-data)
-        - [`HttpError.badData([message], [data])`](#httperrorbaddatamessage-data)
-        - [`HttpError.locked([message], [data])`](#httperrorlockedmessage-data)
-        - [`HttpError.failedDependency([message], [data])`](#httperrorfaileddependencymessage-data)
-        - [`HttpError.preconditionRequired([message], [data])`](#httperrorpreconditionrequiredmessage-data)
-        - [`HttpError.tooManyRequests([message], [data])`](#httperrortoomanyrequestsmessage-data)
-        - [`HttpError.illegal([message], [data])`](#httperrorillegalmessage-data)
+        - [`HttpError.badRequest([message], [data], [code])`](#httperrorbadrequestmessage-data-code)
+        - [`HttpError.unauthorized([message], [scheme], [attributes], [code])`](#httperrorunauthorizedmessage-scheme-attributes-code)
+        - [`HttpError.paymentRequired([message], [data], [code])`](#httperrorpaymentrequiredmessage-data-code)
+        - [`HttpError.forbidden([message], [data], [code])`](#httperrorforbiddenmessage-data-code)
+        - [`HttpError.notFound([message], [data], [code])`](#httperrornotfoundmessage-data-code)
+        - [`HttpError.methodNotAllowed([message], [data], [allow], [code])`](#httperrormethodnotallowedmessage-data-allow-code)
+        - [`HttpError.notAcceptable([message], [data], [code])`](#httperrornotacceptablemessage-data-code)
+        - [`HttpError.proxyAuthRequired([message], [data], [code])`](#httperrorproxyauthrequiredmessage-data-code)
+        - [`HttpError.clientTimeout([message], [data], [code])`](#httperrorclienttimeoutmessage-data-code)
+        - [`HttpError.conflict([message], [data], [code])`](#httperrorconflictmessage-data-code)
+        - [`HttpError.resourceGone([message], [data], [code])`](#httperrorresourcegonemessage-data-code)
+        - [`HttpError.lengthRequired([message], [data], [code])`](#httperrorlengthrequiredmessage-data-code)
+        - [`HttpError.preconditionFailed([message], [data], [code])`](#httperrorpreconditionfailedmessage-data-code)
+        - [`HttpError.entityTooLarge([message], [data], [code])`](#httperrorentitytoolargemessage-data-code)
+        - [`HttpError.uriTooLong([message], [data], [code])`](#httperroruritoolongmessage-data-code)
+        - [`HttpError.unsupportedMediaType([message], [data], [code])`](#httperrorunsupportedmediatypemessage-data-code)
+        - [`HttpError.rangeNotSatisfiable([message], [data], [code])`](#httperrorrangenotsatisfiablemessage-data-code)
+        - [`HttpError.expectationFailed([message], [data], [code])`](#httperrorexpectationfailedmessage-data-code)
+        - [`HttpError.teapot([message], [data], [code])`](#httperrorteapotmessage-data-code)
+        - [`HttpError.badData([message], [data], [code])`](#httperrorbaddatamessage-data-code)
+        - [`HttpError.locked([message], [data], [code])`](#httperrorlockedmessage-data-code)
+        - [`HttpError.failedDependency([message], [data], [code])`](#httperrorfaileddependencymessage-data-code)
+        - [`HttpError.preconditionRequired([message], [data], [code])`](#httperrorpreconditionrequiredmessage-data-code)
+        - [`HttpError.tooManyRequests([message], [data], [code])`](#httperrortoomanyrequestsmessage-data-code)
+        - [`HttpError.illegal([message], [data], [code])`](#httperrorillegalmessage-data-code)
     - [HTTP 5xx Errors](#http-5xx-errors)
-        - [`HttpError.badImplementation([message], [data])` - (*alias: `internal`*)](#httperrorbadimplementationmessage-data---alias-internal)
-        - [`HttpError.notImplemented([message], [data])`](#httperrornotimplementedmessage-data)
-        - [`HttpError.badGateway([message], [data])`](#httperrorbadgatewaymessage-data)
-        - [`HttpError.serverUnavailable([message], [data])`](#httperrorserverunavailablemessage-data)
-        - [`HttpError.gatewayTimeout([message], [data])`](#httperrorgatewaytimeoutmessage-data)
+        - [`HttpError.badImplementation([message], [data], [code])` - (*alias: `internal`*)](#httperrorbadimplementationmessage-data-code---alias-internal)
+        - [`HttpError.notImplemented([message], [data], [code])`](#httperrornotimplementedmessage-data-code)
+        - [`HttpError.badGateway([message], [data], [code])`](#httperrorbadgatewaymessage-data-code)
+        - [`HttpError.serverUnavailable([message], [data], [code])`](#httperrorserverunavailablemessage-data-code)
+        - [`HttpError.gatewayTimeout([message], [data], [code])`](#httperrorgatewaytimeoutmessage-data-code)
     - [F.A.Q.](#faq)
 
 <!-- tocstop -->
@@ -67,6 +67,7 @@ error response object which includes the following properties:
         - `statusCode` - the HTTP status code, derived from `error.output.statusCode`.
         - `error` - the HTTP status message (e.g. 'Bad Request', 'Internal Server Error') derived from `statusCode`.
         - `message` - the error message derived from `error.message`.
+        - `code` - the error specific code easy to interpret.
 - inherited `Error` properties.
 
 The `HttpError` object also supports the following method:
@@ -91,6 +92,9 @@ Creates a new `HttpError` object using the provided `message` and then calling
     - `data` - additional error information (assigned to `error.data`).
     - `decorate` - an option with extra properties to set on the error object.
     - `ctor` - constructor reference used to crop the exception call stack output.
+    - `level` - the level of the error (default to `CRITICAL`).
+    - `type` - the error type (default to `PROGRAMMING`).
+    - code - the error code.
     - if `message` is an error object, also supports the other [`boomify()`](#boomifyerr-options)
       options.
 
@@ -118,7 +122,7 @@ Identifies whether an error is a `HttpError` object. Same as calling `instanceof
 
 ## HTTP 4xx Errors
 
-### `HttpError.badRequest([message], [data])`
+### `HttpError.badRequest([message], [data], [code])`
 
 Returns a 400 Bad Request error where:
 - `message` - optional message.
@@ -138,7 +142,7 @@ Generates the following response payload:
 }
 ```
 
-### `HttpError.unauthorized([message], [scheme], [attributes])`
+### `HttpError.unauthorized([message], [scheme], [attributes], [code])`
 
 Returns a 401 Unauthorized error where:
 - `message` - optional message.
@@ -230,7 +234,7 @@ Generates the following response:
 }
 ```
 
-### `HttpError.paymentRequired([message], [data])`
+### `HttpError.paymentRequired([message], [data], [code])`
 
 Returns a 402 Payment Required error where:
 - `message` - optional message.
@@ -250,7 +254,7 @@ Generates the following response payload:
 }
 ```
 
-### `HttpError.forbidden([message], [data])`
+### `HttpError.forbidden([message], [data], [code])`
 
 Returns a 403 Forbidden error where:
 - `message` - optional message.
@@ -270,7 +274,7 @@ Generates the following response payload:
 }
 ```
 
-### `HttpError.notFound([message], [data])`
+### `HttpError.notFound([message], [data], [code])`
 
 Returns a 404 Not Found error where:
 - `message` - optional message.
@@ -290,7 +294,7 @@ Generates the following response payload:
 }
 ```
 
-### `HttpError.methodNotAllowed([message], [data], [allow])`
+### `HttpError.methodNotAllowed([message], [data], [allow], [code])`
 
 Returns a 405 Method Not Allowed error where:
 - `message` - optional message.
@@ -311,7 +315,7 @@ Generates the following response payload:
 }
 ```
 
-### `HttpError.notAcceptable([message], [data])`
+### `HttpError.notAcceptable([message], [data], [code])`
 
 Returns a 406 Not Acceptable error where:
 - `message` - optional message.
@@ -331,7 +335,7 @@ Generates the following response payload:
 }
 ```
 
-### `HttpError.proxyAuthRequired([message], [data])`
+### `HttpError.proxyAuthRequired([message], [data], [code])`
 
 Returns a 407 Proxy Authentication Required error where:
 - `message` - optional message.
@@ -351,7 +355,7 @@ Generates the following response payload:
 }
 ```
 
-### `HttpError.clientTimeout([message], [data])`
+### `HttpError.clientTimeout([message], [data], [code])`
 
 Returns a 408 Request Time-out error where:
 - `message` - optional message.
@@ -371,7 +375,7 @@ Generates the following response payload:
 }
 ```
 
-### `HttpError.conflict([message], [data])`
+### `HttpError.conflict([message], [data], [code])`
 
 Returns a 409 Conflict error where:
 - `message` - optional message.
@@ -391,7 +395,7 @@ Generates the following response payload:
 }
 ```
 
-### `HttpError.resourceGone([message], [data])`
+### `HttpError.resourceGone([message], [data], [code])`
 
 Returns a 410 Gone error where:
 - `message` - optional message.
@@ -411,7 +415,7 @@ Generates the following response payload:
 }
 ```
 
-### `HttpError.lengthRequired([message], [data])`
+### `HttpError.lengthRequired([message], [data], [code])`
 
 Returns a 411 Length Required error where:
 - `message` - optional message.
@@ -431,7 +435,7 @@ Generates the following response payload:
 }
 ```
 
-### `HttpError.preconditionFailed([message], [data])`
+### `HttpError.preconditionFailed([message], [data], [code])`
 
 Returns a 412 Precondition Failed error where:
 - `message` - optional message.
@@ -450,7 +454,7 @@ Generates the following response payload:
 }
 ```
 
-### `HttpError.entityTooLarge([message], [data])`
+### `HttpError.entityTooLarge([message], [data], [code])`
 
 Returns a 413 Request Entity Too Large error where:
 - `message` - optional message.
@@ -470,7 +474,7 @@ Generates the following response payload:
 }
 ```
 
-### `HttpError.uriTooLong([message], [data])`
+### `HttpError.uriTooLong([message], [data], [code])`
 
 Returns a 414 Request-URI Too Large error where:
 - `message` - optional message.
@@ -490,7 +494,7 @@ Generates the following response payload:
 }
 ```
 
-### `HttpError.unsupportedMediaType([message], [data])`
+### `HttpError.unsupportedMediaType([message], [data], [code])`
 
 Returns a 415 Unsupported Media Type error where:
 - `message` - optional message.
@@ -510,7 +514,7 @@ Generates the following response payload:
 }
 ```
 
-### `HttpError.rangeNotSatisfiable([message], [data])`
+### `HttpError.rangeNotSatisfiable([message], [data], [code])`
 
 Returns a 416 Requested Range Not Satisfiable error where:
 - `message` - optional message.
@@ -529,7 +533,7 @@ Generates the following response payload:
 }
 ```
 
-### `HttpError.expectationFailed([message], [data])`
+### `HttpError.expectationFailed([message], [data], [code])`
 
 Returns a 417 Expectation Failed error where:
 - `message` - optional message.
@@ -549,7 +553,7 @@ Generates the following response payload:
 }
 ```
 
-### `HttpError.teapot([message], [data])`
+### `HttpError.teapot([message], [data], [code])`
 
 Returns a 418 I'm a Teapot error where:
 - `message` - optional message.
@@ -569,7 +573,7 @@ Generates the following response payload:
 }
 ```
 
-### `HttpError.badData([message], [data])`
+### `HttpError.badData([message], [data], [code])`
 
 Returns a 422 Unprocessable Entity error where:
 - `message` - optional message.
@@ -589,7 +593,7 @@ Generates the following response payload:
 }
 ```
 
-### `HttpError.locked([message], [data])`
+### `HttpError.locked([message], [data], [code])`
 
 Returns a 423 Locked error where:
 - `message` - optional message.
@@ -609,7 +613,7 @@ Generates the following response payload:
 }
 ```
 
-### `HttpError.failedDependency([message], [data])`
+### `HttpError.failedDependency([message], [data], [code])`
 
 Returns a 424 Failed Dependency error where:
 - `message` - optional message.
@@ -629,7 +633,7 @@ Generates the following response payload:
 }
 ```
 
-### `HttpError.preconditionRequired([message], [data])`
+### `HttpError.preconditionRequired([message], [data], [code])`
 
 Returns a 428 Precondition Required error where:
 - `message` - optional message.
@@ -649,7 +653,7 @@ Generates the following response payload:
 }
 ```
 
-### `HttpError.tooManyRequests([message], [data])`
+### `HttpError.tooManyRequests([message], [data], [code])`
 
 Returns a 429 Too Many Requests error where:
 - `message` - optional message.
@@ -669,7 +673,7 @@ Generates the following response payload:
 }
 ```
 
-### `HttpError.illegal([message], [data])`
+### `HttpError.illegal([message], [data], [code])`
 
 Returns a 451 Unavailable For Legal Reasons error where:
 - `message` - optional message.
@@ -693,7 +697,7 @@ Generates the following response payload:
 
 All 500 errors hide your message from the end user. Your message is recorded in the server log.
 
-### `HttpError.badImplementation([message], [data])` - (*alias: `internal`*)
+### `HttpError.badImplementation([message], [data], [code])` - (*alias: `internal`*)
 
 Returns a 500 Internal Server Error error where:
 - `message` - optional message.
@@ -713,7 +717,7 @@ Generates the following response payload:
 }
 ```
 
-### `HttpError.notImplemented([message], [data])`
+### `HttpError.notImplemented([message], [data], [code])`
 
 Returns a 501 Not Implemented error where:
 - `message` - optional message.
@@ -733,7 +737,7 @@ Generates the following response payload:
 }
 ```
 
-### `HttpError.badGateway([message], [data])`
+### `HttpError.badGateway([message], [data], [code])`
 
 Returns a 502 Bad Gateway error where:
 - `message` - optional message.
@@ -753,7 +757,7 @@ Generates the following response payload:
 }
 ```
 
-### `HttpError.serverUnavailable([message], [data])`
+### `HttpError.serverUnavailable([message], [data], [code])`
 
 Returns a 503 Service Unavailable error where:
 - `message` - optional message.
@@ -773,7 +777,7 @@ Generates the following response payload:
 }
 ```
 
-### `HttpError.gatewayTimeout([message], [data])`
+### `HttpError.gatewayTimeout([message], [data], [code])`
 
 Returns a 504 Gateway Time-out error where:
 - `message` - optional message.
