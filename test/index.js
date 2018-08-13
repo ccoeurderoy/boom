@@ -28,17 +28,21 @@ describe('HttpError', () => {
         expect(err.output.statusCode).to.equal(400);
         expect(err.level).to.equal('CRITICAL');
         expect(err.type).to.equal('PROGRAMMING');
+        expect(err.code).to.equal(err.output.payload.code);
+        expect(err.code).to.equal('BAD_REQUEST');
     });
 
     it('clones error object', () => {
 
         const oops = new Error('oops');
-        const err = new HttpError(oops, { statusCode: 400, level: 'WARNING', type: 'OPERATIONAL' });
+        const err = new HttpError(oops, { statusCode: 400, level: 'WARNING', type: 'OPERATIONAL', code: 'OOPS_CODE' });
         expect(err).to.not.shallow.equal(oops);
         expect(err.output.payload.message).to.equal('oops');
         expect(err.output.statusCode).to.equal(400);
         expect(err.level).to.equal('WARNING');
         expect(err.type).to.equal('OPERATIONAL');
+        expect(err.code).to.equal(err.output.payload.code);
+        expect(err.code).to.equal('OOPS_CODE');
     });
 
     it('decorates error', () => {
@@ -181,6 +185,7 @@ describe('HttpError', () => {
             expect(boom).to.shallow.equal(error);
             expect(error.output.payload.message).to.equal('An internal server error occurred');
             expect(error.output.statusCode).to.equal(500);
+            expect(error.output.payload.code).to.equal('INTERNAL_SERVER_ERROR');
         });
 
         it('overrides message and statusCode', () => {
@@ -282,10 +287,13 @@ describe('HttpError', () => {
 
         it('returns a 400 error statusCode', () => {
 
-            const error = HttpError.badRequest();
+            const error = HttpError.badRequest('Hello', null, 'UNKNOWN_PARAM');
 
             expect(error.output.statusCode).to.equal(400);
             expect(error.isServer).to.be.false();
+            expect(error.message).to.equal('Hello');
+            expect(error.output.payload.message).to.equal('Hello');
+            expect(error.output.payload.code).to.equal('UNKNOWN_PARAM');
         });
 
         it('sets the message with the passed in message', () => {
