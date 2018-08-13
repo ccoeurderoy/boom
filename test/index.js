@@ -24,6 +24,7 @@ describe('HttpError', () => {
 
         const err = new HttpError('oops', { statusCode: 400 });
         expect(err.output.payload.message).to.equal('oops');
+        expect(err.output.payload.code).to.equal('BAD_REQUEST');
         expect(err.output.statusCode).to.equal(400);
     });
 
@@ -134,7 +135,8 @@ describe('HttpError', () => {
                 payload: {
                     statusCode: 500,
                     error: 'Internal Server Error',
-                    message: 'An internal server error occurred'
+                    message: 'An internal server error occurred',
+                    code: 'INTERNAL_SERVER_ERROR'
                 },
                 headers: {}
             });
@@ -598,7 +600,9 @@ describe('HttpError', () => {
 
         it('returns a 422 error statusCode', () => {
 
-            expect(HttpError.badData().output.statusCode).to.equal(422);
+            const err = HttpError.badData();
+            expect(err.output.statusCode).to.equal(422);
+            expect(err.code).to.equal('UNPROCESSABLE_ENTITY');
         });
 
         it('sets the message with the passed in message', () => {
@@ -613,6 +617,7 @@ describe('HttpError', () => {
         it('returns a 423 error statusCode', () => {
 
             expect(HttpError.locked().output.statusCode).to.equal(423);
+            expect(HttpError.locked().code).to.equal('LOCKED');
         });
 
         it('sets the message with the passed in message', () => {
@@ -816,7 +821,8 @@ describe('HttpError', () => {
                 payload: {
                     error: 'Internal Server Error',
                     message: 'An internal server error occurred',
-                    statusCode: 500
+                    statusCode: 500,
+                    code: 'INTERNAL_SERVER_ERROR'
                 }
             });
         });
@@ -831,7 +837,8 @@ describe('HttpError', () => {
                 payload: {
                     error: 'Internal Server Error',
                     message: 'An internal server error occurred',
-                    statusCode: 500
+                    statusCode: 500,
+                    code: 'INTERNAL_SERVER_ERROR'
                 }
             });
         });
@@ -889,7 +896,7 @@ describe('HttpError', () => {
             'badImplementation'
         ].forEach((name) => {
 
-            it(`should allow \`HttpError${name}(err)\` and preserve the error`, () => {
+            it(`should allow \`HttpError.${name}(err)\` and preserve the error`, () => {
 
                 const error = new Error('An example mongoose validation error');
                 error.name = 'ValidationError';
