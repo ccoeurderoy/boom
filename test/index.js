@@ -26,15 +26,19 @@ describe('HttpError', () => {
         expect(err.output.payload.message).to.equal('oops');
         expect(err.output.payload.code).to.equal('BAD_REQUEST');
         expect(err.output.statusCode).to.equal(400);
+        expect(err.level).to.equal('CRITICAL');
+        expect(err.type).to.equal('PROGRAMMING');
     });
 
     it('clones error object', () => {
 
         const oops = new Error('oops');
-        const err = new HttpError(oops, { statusCode: 400 });
+        const err = new HttpError(oops, { statusCode: 400, level: 'WARNING', type: 'OPERATIONAL' });
         expect(err).to.not.shallow.equal(oops);
         expect(err.output.payload.message).to.equal('oops');
         expect(err.output.statusCode).to.equal(400);
+        expect(err.level).to.equal('WARNING');
+        expect(err.type).to.equal('OPERATIONAL');
     });
 
     it('decorates error', () => {
